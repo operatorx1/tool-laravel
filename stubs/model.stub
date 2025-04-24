@@ -1,0 +1,26 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class {{ class }} extends Model
+{
+    use HasFactory;
+    protected $table        = 'tb_';
+    protected $primaryKey   = 'id';
+    protected $keyType      = 'string';
+    //public $incrementing    = false;
+    
+    protected $fillable = [
+        'id',
+        'name',
+        //'rekening_code',
+    ];
+    
+    //public function rekening(){
+    //    return $this->hasOne(Rekening::class,'code','rekening_code');
+    //}
+
+}

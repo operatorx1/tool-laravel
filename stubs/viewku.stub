@@ -1,0 +1,204 @@
+@extends('template.template_admin')
+
+@section('content')
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm" id="table-data" style="width: 100%">
+                        <thead>
+                            <tr class="bg-info">
+                                <th style="width: 10px">No</th>
+                                <th>Name</th>
+                                <th style="width: 80px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <button class="btn btn-sm btn-success" onclick="edit_data(-1)"><i class="fa fa-plus"></i> Tambah Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="fmodal-edit" role="dialog" data-backdrop='static'>
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"> </h5>
+                <button class="close" type="button" data-dismiss="modal">×</button>
+            </div>
+            <div class="modal-body" id="">
+                <form action="{{$link_save}}" method="POST" class="form-horizontal" id="form-simpan">
+                    @csrf
+                    <div class="hidden">
+                        <input name="is_edit" id="tis_edit" value="0" >
+                        <input name="id" id="tid" value="" >
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label">Name</label>
+                        <div class="col-md-10">
+                            <input type="text" name="name" id="tname" class="form-clear form-control " value="" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <button class="btn btn-success" type="submit"><i class="fa fa-save"></i> Simpan</button>
+                            <button class="btn btn-default" type="button" data-dismiss="modal"> Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var data_tabel = []; 
+    $(function(){
+        lod_table();
+        $('#form-simpan').ajaxForm({
+            beforeSend: function () {
+                $('.pesan-error').remove();
+                $('.has-error').removeClass('has-error');
+                btn_loading('.tombol-loading');
+            },
+            complete: function (xhr) {
+                try {
+                    var a = JSON.parse(xhr.responseText);
+                    if (a.code == '00') {
+                        var Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        $('#fmodal-edit').modal('hide');
+                        Toast.fire({title:a.title,text:a.message,icon:a.icon});
+                        lod_table();
+                    }
+                    else {
+                        Swal.fire(a.title, a.message, a.icon);
+                        for (var key in a.errors) {
+                            if (!a.errors.hasOwnProperty(key)) continue;
+                            var obj = a.errors[key];
+                            for (var prop in obj) {
+                                if (!obj.hasOwnProperty(prop)) continue;
+                                $('<small class="pesan-error text-danger">' + obj[prop] + '</small>').insertAfter("[name='" + key + "']");
+                            }
+                        }
+                    }
+                    btn_reset('.tombol-loading');
+            
+                } catch (e) {
+                    alert(xhr.responseText);
+                    btn_reset('.tombol-loading');
+                }
+            }
+        })
+    })
+
+    function lod_table(){
+        $('#table-data').dataTable().fnClearTable();
+        $('#table-data').dataTable().fnDestroy();
+        $('#table-data').dataTable({
+            ajax : {
+                url: "{{$link_data}}" ,
+                data: {} ,
+                dataSrc: function (json) {
+                    /*window.data_tabel = json.xresult;*/
+                    return json.data;
+                },
+                error: function (xhr, error, code) {
+                    console.log(xhr, code);
+                    if(code == 'Unauthorized'){
+                        alert('Sesi telah habis. silahkan login kembali');
+                        location.reload();
+                    }
+                }
+            },
+            createdRow: function (row, data, dataIndex) {
+                $(row).addClass('ngeblok');
+            },
+            columns:[
+                {data:"nomer",width: "20px", className: "text-center"},
+                {data:"name"},
+                {data:"id", width: "80px", className: "text-center"},
+            ],
+            columnDefs:[
+                {
+                    targets: 2,
+                    render : function ( data, type, row, meta ){
+                        if(type === 'display'){
+                            return `<button class="btn btn-success btn-sm" onclick="edit_data(`+ data + `)" ><i class="fas fa-edit"></i></button>
+                                   <button class="btn btn-danger btn-sm" onclick="delete_data(`+ data + `)" ><i class="fas fa-times"></i></button>`;
+                        }else{return data;}
+                    }
+                },
+            ],
+        });
+    }
+
+    function edit_data(id){
+        $('.pesan-error').remove();
+        $('.has-error').removeClass('has-error');
+        if (id >= 0){
+            $.get("{{$link_data1}}?id="+ id, 
+            {id:id},
+            function(a, status){
+                try{
+                    if (a.code == "00"){
+                        $('#tis_edit').val("1");
+                        $('#tid').val(a.data.id);
+                        $('#tname').val(a.data.name);
+                        $('#fmodal-edit').modal('show');
+                    }
+                    else{
+                        Swal.fire(a.title, a.message, a.icon);
+                        return false;
+                    }
+                } catch(e) {
+                    alert("e---> " +e);
+                }
+            });
+        }
+        else{
+            $('#tis_edit').val(0);
+            $('#tid').val('');
+            $('.form-clear').val('');
+            $('#fmodal-edit').modal('show');
+        }
+    }
+
+    function delete_data(id){
+        Swal.fire({
+            text: "Apakah Anda yakin ingin menghapus Data ?",
+            title:'Hapus data',
+            icon: "question",
+            showCancelButton: true,
+        }).then(function(result) {
+            if (result.value == true) {
+                $.get("{{$link_delete}}", {id:id},
+                function(a, status){
+                    try{
+                        Swal.fire({title:a.title,text:a.message,icon:a.icon}).then(function(){
+                            if (a.code == '00'){
+                                lod_table();
+                            }
+                        });
+                    } catch(e) {
+                        alert("e---> " +e);
+                    }
+                });
+            }
+        })
+    }
+</script>
+@endsection('content')

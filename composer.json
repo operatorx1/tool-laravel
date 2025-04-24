@@ -1,0 +1,12 @@
+{
+    "name": "operatorx1/tool-laravel",
+    "description": "Kumpulan stubs dan Laravel Artisan Commands pribadi",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+      "psr-4": {
+        "operatorx1\\MyDevTools\\": "app/"
+      }
+    },
+    "require": {}
+  }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace ToolLaravel\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -16,13 +16,18 @@ class MakeViewCustom extends Command
         $path = resource_path("views/{$name}.blade.php");
         $stubPath = base_path("stubs/viewku.stub");
 
+        $customStubPath = base_path("stubs/viewku.stub");
+        $defaultStubPath = __DIR__ . '/../../stubs/viewku.stub';
+         // Gunakan custom stub jika tersedia, fallback ke bawaan package
+         $stubPath = File::exists($customStubPath) ? $customStubPath : $defaultStubPath;
+
         if (File::exists($path)) {
             $this->error("View [{$name}] sudah ada!");
             return;
         }
 
         if (!File::exists($stubPath)) {
-            $this->error("File stub tidak ditemukan di: stubs/viewku.stub");
+            $this->error("File stub tidak ditemukan di: {{$stubPath}}");
             return;
         }
 

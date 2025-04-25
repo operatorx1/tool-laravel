@@ -1,12 +1,20 @@
 {
-    "name": "operatorx1/tool-laravel",
-    "description": "Kumpulan stubs dan Laravel Artisan Commands pribadi",
-    "type": "library",
-    "license": "MIT",
-    "autoload": {
-      "psr-4": {
-        "operatorx1\\MyDevTools\\": "app/"
-      }
-    },
-    "require": {}
-  }
+  "name": "operatorx1/tool-laravel",
+  "description": "Custom command untuk generate view",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "ToolLaravel\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "ToolLaravel\\ToolLaravelServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

@@ -38,7 +38,7 @@ class MakeControllerCustom extends Command
         $namespace = str_replace('/', '\\', trim($namespace, '\\'));
 
         $content = str_replace(
-            ['{{ rootNamespace }}', '{{ class }}'],
+            ['{{ namespace }}', '{{ class }}'],
             [$namespace, $className],
             $stub
         );

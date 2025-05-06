@@ -14,7 +14,6 @@ class MakeViewCustom extends Command
     {
         $name = str_replace('.', '/', $this->argument('name'));
         $path = resource_path("views/{$name}.blade.php");
-        $stubPath = base_path("stubs/viewku.stub");
 
         $customStubPath = base_path("stubs/viewku.stub");
         $defaultStubPath = __DIR__ . '/../../stubs/viewku.stub';

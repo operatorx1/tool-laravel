@@ -24,7 +24,7 @@ class {{ class }} extends Controller
         $data['link_delete']    = route($form . '_delete');
         $data['link_save']      = route($form . '_save');
     
-        $data['judul']          = 'Form ' . $form;
+        $data['judul']          = 'Form ' . ucwords(str_replace("_", " ", $form));
         session(['menu_active'  => $form ]);
         return view($this->view_path. $form . '_index' ,$data);
     }

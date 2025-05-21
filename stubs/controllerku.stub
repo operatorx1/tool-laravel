@@ -2,6 +2,7 @@
 
 namespace {{ namespace }};
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -30,16 +31,20 @@ class {{ class }} extends Controller
     }
 
     public function data(Request $request){
-        $q = DB::table('users')->get();
+        $q = User::get();
         $result = [];
         foreach ($q as $key => $value) {
-            $row = [
-                'nomer' =>($key + 1),
-                'id' => $value->id ,
-                'name' => $value->user_name,
-                //'enid' => enkripsi($value->id) ,
-            ];
-            $result[] = $row;
+            //$row = [
+            //    'nomer' =>($key + 1),
+            //    'id' => $value->id ,
+            //    'name' => $value->user_name,
+            //    //'enid' => enkripsi($value->id) ,
+            //];
+            //$result[] = $row;
+
+            $value->nomer = ($key+1);
+            $value->name = $value->user_name;
+            $result[] = $value;
         }
         $ret = [
             "code"      => "00",
@@ -55,7 +60,7 @@ class {{ class }} extends Controller
 
     public function data1(Request $request){
         $id = $request->id;
-        $q = DB::table('users')->where('id', $id)->first();
+        $q = User::find($id);
         if ($q == null) {
             $ret = [
                 "code"      => '01',
@@ -100,14 +105,11 @@ class {{ class }} extends Controller
             'name' => $request->name,
         ];
         if ($request->id == ''){
-            $id = DB::table('users')
-            ->insertGetId($data);
+            $id = User::create($data)->id;
         }
         else{
             $id = $request->id;
-            DB::table('users')
-            ->where('id',$request->id)
-            ->update($data);
+            User::where('id',$request->id)->update($data);
         } 
     
         $ret = [
@@ -124,7 +126,7 @@ class {{ class }} extends Controller
     public function delete(Request $request){
         $id = $request->id;
         $c  = [];
-        $c['transaksi'] = DB::table('other_table')->where('user', $id)->count();
+        $c['transaksi'] = Product::where('user', $id)->count();
         $cek = 0;
         $tempat  = '';
         foreach ($c as $key => $value) {
@@ -142,7 +144,7 @@ class {{ class }} extends Controller
             return response()->json($ret, 200);
         }
     
-        DB::table('users')->where('id', $id)->delete();
+        //User::where('id', $id)->delete();
         $ret = [
             "code"      => '00',
             "title"     => 'OK',

@@ -50,10 +50,10 @@ class {{ class }} extends Controller
             "code"      => "00",
             "title"     => "OK",
             "message"   => "OK",
-            "icon"      => "success",
-            "errors"    => [],
             "data"      => $result,
-            "xresult"   => $q,
+            "errors"    => [],
+            "icon"      => "success",
+            //"xresult"   => $q,
         ];
         return response()->json($ret, 200);
     }
@@ -66,8 +66,9 @@ class {{ class }} extends Controller
                 "code"      => '01',
                 "title"     => 'Data tidak ditemukan',
                 "message"   => "Data tidak ditemukan",
+                "data"      => [],
+                "errors"    => [],
                 "icon"      => 'error',
-                "errors"    => []
             ];
             return response()->json($ret, 200);
         }
@@ -77,9 +78,9 @@ class {{ class }} extends Controller
             "code"      => '00',
             "title"     => 'OK',
             "message"   => "OK",
-            "icon"      => 'success',
-            "errors"    => [],
             "data"      => $q,
+            "errors"    => [],
+            "icon"      => 'success',
         ];
         return response()->json($ret, 200);
     }
@@ -95,8 +96,9 @@ class {{ class }} extends Controller
                 "code"      => '01',
                 "title"     => 'Kurang Valid',
                 "message"   => "Isi data dengan valid. " . $validated->errors()->first(),
+                "data"      => [],
+                "errors"    => $validated->errors(),
                 "icon"      => 'error',
-                "errors"    => $validated->errors()
             ];
             return response()->json($ret, 200);
         }
@@ -105,20 +107,21 @@ class {{ class }} extends Controller
             'name' => $request->name,
         ];
         if ($request->id == ''){
-            $id = User::create($data)->id;
+            $rdata = User::create($data);
         }
         else{
             $id = $request->id;
-            User::where('id',$request->id)->update($data);
+            $rdata = User::find($request->id);
+            $rdata->update($data);
         } 
     
         $ret = [
             "code"      => '00',
             "title"     => 'OK',
             "message"   => "Data telah disimpan",
+            "data"      => $rdata,
             "icon"      => 'success',
             "errors"    => [],
-            "id"        => $id,
         ];
         return response()->json($ret, 200);
     }
@@ -138,8 +141,9 @@ class {{ class }} extends Controller
                 "code"      => '01',
                 "title"     => 'Tidak terhapus',
                 "message"   => "Data masih digunakan {$tempat} ",
+                "data"      => [],
+                "errors"    => [],
                 "icon"      => 'error',
-                "errors"    => []
             ];
             return response()->json($ret, 200);
         }
@@ -149,8 +153,9 @@ class {{ class }} extends Controller
             "code"      => '00',
             "title"     => 'OK',
             "message"   => "Data telah dihapus",
+            "data"      => [],
+            "errors"    => [],
             "icon"      => 'success',
-            "errors"    => []
         ];
         return response()->json($ret, 200);
     }

@@ -13,35 +13,13 @@ class {{ class }} extends Controller
 {
 
     public function __construct(){
-        $this->middleware('auth');
-        $this->view_path = 'user/';
-    }
 
-    public function index(){
-        $form     = 'formulir';
-        $data['data_tabel']     = [];
-        $data['link_data']      = route($form . '_data');
-        $data['link_data1']     = route($form . '_data1');
-        $data['link_delete']    = route($form . '_delete');
-        $data['link_save']      = route($form . '_save');
-    
-        $data['judul']          = 'Form ' . ucwords(str_replace("_", " ", $form));
-        session(['menu_active'  => $form ]);
-        return view($this->view_path. $form . '_index' ,$data);
     }
 
     public function data(Request $request){
         $q = User::get();
         $result = [];
         foreach ($q as $key => $value) {
-            //$row = [
-            //    'nomer' =>($key + 1),
-            //    'id' => $value->id ,
-            //    'name' => $value->user_name,
-            //    //'enid' => enkripsi($value->id) ,
-            //];
-            //$result[] = $row;
-
             $value->nomer = ($key+1);
             $value->name = $value->user_name;
             $result[] = $value;
@@ -50,10 +28,9 @@ class {{ class }} extends Controller
             "code"      => "00",
             "title"     => "OK",
             "message"   => "OK",
-            "icon"      => "success",
-            "errors"    => [],
             "data"      => $result,
-            "xresult"   => $q,
+            "errors"    => [],
+            "icon"      => "success",
         ];
         return response()->json($ret, 200);
     }
@@ -64,22 +41,22 @@ class {{ class }} extends Controller
         if ($q == null) {
             $ret = [
                 "code"      => '01',
-                "title"     => 'Data tidak ditemukan',
+                "title"     => 'Gagal',
                 "message"   => "Data tidak ditemukan",
-                "icon"      => 'error',
+                "data"      => []
                 "errors"    => []
+                "icon"      => 'error',
             ];
             return response()->json($ret, 200);
         }
         
-        $q->name = $q->user_name;
         $ret = [
             "code"      => '00',
             "title"     => 'OK',
             "message"   => "OK",
-            "icon"      => 'success',
-            "errors"    => [],
             "data"      => $q,
+            "errors"    => [],
+            "icon"      => 'success',
         ];
         return response()->json($ret, 200);
     }
@@ -87,7 +64,8 @@ class {{ class }} extends Controller
 
     public function save(Request $request){
         $rule = [
-            'name'      => 'required|min:5|max:100',
+            'id'    => $request->method() == "PUT" ? 'required|exists:users,id' : '',
+            'name'  => 'required||unique:users,name,'. $request->id,
         ];
         $validated = Validator::make($request->all(), $rule);
         if($validated->fails()){
@@ -95,8 +73,9 @@ class {{ class }} extends Controller
                 "code"      => '01',
                 "title"     => 'Kurang Valid',
                 "message"   => "Isi data dengan valid. " . $validated->errors()->first(),
-                "icon"      => 'error',
+                "data"      => [],
                 "errors"    => $validated->errors()
+                "icon"      => 'error',
             ];
             return response()->json($ret, 200);
         }
@@ -104,21 +83,21 @@ class {{ class }} extends Controller
         $data = [
             'name' => $request->name,
         ];
-        if ($request->id == ''){
-            $id = User::create($data)->id;
+        if ($request->method() == "PUT"){
+            $rdata = User::find($request->id);
+            $rdata->update($data);
         }
         else{
-            $id = $request->id;
-            User::where('id',$request->id)->update($data);
+            $rdata = User::create($data);
         } 
     
         $ret = [
             "code"      => '00',
             "title"     => 'OK',
             "message"   => "Data telah disimpan",
-            "icon"      => 'success',
+            "data"      => [],
             "errors"    => [],
-            "id"        => $id,
+            "icon"      => 'success',
         ];
         return response()->json($ret, 200);
     }
@@ -149,8 +128,9 @@ class {{ class }} extends Controller
             "code"      => '00',
             "title"     => 'OK',
             "message"   => "Data telah dihapus",
-            "icon"      => 'success',
+            "data"      => [],
             "errors"    => []
+            "icon"      => 'success',
         ];
         return response()->json($ret, 200);
     }

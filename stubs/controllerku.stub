@@ -43,8 +43,8 @@ class {{ class }} extends Controller
                 "code"      => '01',
                 "title"     => 'Gagal',
                 "message"   => "Data tidak ditemukan",
-                "data"      => []
-                "errors"    => []
+                "data"      => [],
+                "errors"    => [],
                 "icon"      => 'error',
             ];
             return response()->json($ret, 200);
@@ -118,7 +118,7 @@ class {{ class }} extends Controller
                 "title"     => 'Tidak terhapus',
                 "message"   => "Data masih digunakan {$tempat} ",
                 "icon"      => 'error',
-                "errors"    => []
+                "errors"    => [],
             ];
             return response()->json($ret, 200);
         }
@@ -129,7 +129,7 @@ class {{ class }} extends Controller
             "title"     => 'OK',
             "message"   => "Data telah dihapus",
             "data"      => [],
-            "errors"    => []
+            "errors"    => [],
             "icon"      => 'success',
         ];
         return response()->json($ret, 200);

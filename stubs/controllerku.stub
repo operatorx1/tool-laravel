@@ -74,7 +74,7 @@ class {{ class }} extends Controller
                 "title"     => 'Kurang Valid',
                 "message"   => "Isi data dengan valid. " . $validated->errors()->first(),
                 "data"      => [],
-                "errors"    => $validated->errors()
+                "errors"    => $validated->errors(),
                 "icon"      => 'error',
             ];
             return response()->json($ret, 200);

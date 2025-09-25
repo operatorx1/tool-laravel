@@ -64,7 +64,7 @@ class {{ class }} extends Controller
 
     public function save(Request $request){
         $rule = [
-            'id'    => $request->method() == "PUT" ? 'required|exists:users,id' : '',
+            'id'    => $request->method() == "PUT" ? 'required|exists:users,id' : 'nullable',
             'name'  => 'required||unique:users,name,'. $request->id,
         ];
         $validated = Validator::make($request->all(), $rule);
@@ -95,7 +95,7 @@ class {{ class }} extends Controller
             "code"      => '00',
             "title"     => 'OK',
             "message"   => "Data telah disimpan",
-            "data"      => [],
+            "data"      => $rdata,
             "errors"    => [],
             "icon"      => 'success',
         ];

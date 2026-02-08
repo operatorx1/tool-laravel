@@ -34,12 +34,13 @@ class MakeControllerCustom extends Command
     
         $className = class_basename($argumentName);
         $subNamespace = trim(str_replace('/', '\\', dirname($argumentName)), '\\');
+        $view_path    = $this->camelToSnake($argumentName) . '.';
     
         $namespace = 'App\Http\Controllers' . ($subNamespace ? '\\' . $subNamespace : '');
     
         $content = str_replace(
-            ['{{ namespace }}', '{{ class }}'],
-            [$namespace, $className],
+            ['{{ namespace }}', '{{ class }}', '{{ view_path }}'],
+            [$namespace, $className, $view_path],
             $stub
         );
     
@@ -48,6 +49,10 @@ class MakeControllerCustom extends Command
     
         $this->info("Controller [{$argumentName}] berhasil dibuat 🎉");
         return Command::SUCCESS;
+    }
+
+    public function camelToSnake($input){
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
     }
     
 }

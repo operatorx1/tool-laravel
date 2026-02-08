@@ -14,7 +14,7 @@ class {{ class }} extends Controller
 
     public function __construct(){
         $this->middleware('auth');
-        $this->view_path = 'user/';
+        $this->view_path = '{{ view_path }}';
     }
 
     public function index(){

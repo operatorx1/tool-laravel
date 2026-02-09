@@ -34,7 +34,7 @@ class MakeControllerCustom extends Command
     
         $className = class_basename($argumentName);
         $subNamespace = trim(str_replace('/', '\\', dirname($argumentName)), '\\');
-        $view_path    = $this->camelToSnake($argumentName) . '.';
+        $view_path    = "'" . $this->camelToSnake($argumentName) . ".'";
     
         $namespace = 'App\Http\Controllers' . ($subNamespace ? '\\' . $subNamespace : '');
     

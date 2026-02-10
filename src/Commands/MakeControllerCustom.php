@@ -52,7 +52,7 @@ class MakeControllerCustom extends Command
     }
 
     public function camelToSnake($input){
-        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
+        return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $input));
     }
     
 }

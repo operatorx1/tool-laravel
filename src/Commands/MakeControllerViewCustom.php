@@ -34,7 +34,7 @@ class MakeControllerViewCustom extends Command
     
         $className = class_basename($argumentName);
         $subNamespace   = trim(str_replace('/', '\\', dirname($argumentName)), '\\');
-        $view_path      = str_replace('/', '.', $this->camelToSnake($argumentName)) . ".";
+        $view_path      = str_replace(['/', '_controller'], ['.', ''], $this->camelToSnake($argumentName)) . ".";
         $sview_path     = "'{$view_path}'";
         
         $parts          = array_values(array_filter(explode('.', $view_path )));        
@@ -56,7 +56,7 @@ class MakeControllerViewCustom extends Command
 
 
         /* VIEW */        
-        $name = str_replace('.', '/', $this->camelToSnake($argumentName));
+        $name = str_replace(['.', '_controller'], ['/', ''], $this->camelToSnake($argumentName));
         $path = resource_path("views/{$name}/{$view_name}_index.blade.php");
 
         $customStubPath = base_path("stubs/viewku.stub");

@@ -18,7 +18,7 @@ class {{ class }} extends Controller
     }
 
     public function index(){
-        $form     = 'formulir';
+        $form     = {{ form }};
         $data['data_tabel']     = [];
         $data['link_data']      = route($form . '_data');
         $data['link_data1']     = route($form . '_data1');

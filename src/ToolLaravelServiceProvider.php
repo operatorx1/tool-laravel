@@ -4,6 +4,7 @@ namespace ToolLaravel;
 use Illuminate\Support\ServiceProvider;
 use ToolLaravel\Commands\MakeViewCustom;
 use ToolLaravel\Commands\MakeControllerCustom;
+use ToolLaravel\Commands\MakeControllerViewCustom;
 
 class ToolLaravelServiceProvider extends ServiceProvider
 {
@@ -14,6 +15,7 @@ class ToolLaravelServiceProvider extends ServiceProvider
             $this->commands([
                 MakeViewCustom::class,
                 MakeControllerCustom::class,
+                MakeControllerViewCustom::class,
             ]);
 
             // Publikasikan stub jika perlu
